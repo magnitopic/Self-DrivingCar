@@ -7,7 +7,7 @@ class Car {
 
 		this.speed = 0;
 		this.acceleration = 0.2;
-		this.maxSpeed = 5;
+		this.maxSpeed = 3;
 		this.friction = 0.05;
 		this.angle = 0;
 
@@ -26,20 +26,11 @@ class Car {
 			this.speed -= this.acceleration;
 		}
 
-		if (this.speed != 0) {
-			const flip = this.speed > 0 ? 1 : -1;
-			if (this.controls.left) {
-				this.angle += 0.03 * flip;
-			}
-			if (this.controls.right) {
-				this.angle -= 0.03 * flip;
-			}
-		}
 		if (this.speed > this.maxSpeed) {
 			this.speed = this.maxSpeed;
 		}
-		if (this.speed < -this.maxSpeed) {
-			this.speed = -this.maxSpeed;
+		if (this.speed < -this.maxSpeed / 2) {
+			this.speed = -this.maxSpeed / 2;
 		}
 
 		if (this.speed > 0) {
@@ -50,6 +41,16 @@ class Car {
 		}
 		if (Math.abs(this.speed) < this.friction) {
 			this.speed = 0;
+		}
+
+		if (this.speed != 0) {
+			const flip = this.speed > 0 ? 1 : -1;
+			if (this.controls.left) {
+				this.angle += 0.03 * flip;
+			}
+			if (this.controls.right) {
+				this.angle -= 0.03 * flip;
+			}
 		}
 
 		this.x -= Math.sin(this.angle) * this.speed;
