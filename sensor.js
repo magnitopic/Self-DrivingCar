@@ -31,6 +31,13 @@ class Sensor {
 				touches.push(touch);
 			}
 		}
+		if (touches.length == 0) {
+			return null;
+		} else {
+			const offset = touches.map((e) => e.offset);
+			const minOffset = Math.min(...offset);
+			return touches.find((e) => e.offset == minOffset);
+		}
 	}
 
 	#castRays() {
@@ -54,11 +61,23 @@ class Sensor {
 
 	draw(ctx) {
 		for (let i = 0; i < this.rayCount; i++) {
+			let end = this.rays[i][1];
+			if (this.readings[i]) {
+				end = this.readings[i];
+			}
+
 			ctx.beginPath();
 			ctx.lineWidth = 2;
 			ctx.strokeStyle = "yellow";
 			ctx.moveTo(this.rays[i][0].x, this.rays[i][0].y);
+			ctx.lineTo(end.x, end.y);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.lineWidth = 2;
+			ctx.strokeStyle = "black";
 			ctx.moveTo(this.rays[i][1].x, this.rays[i][1].y);
+			ctx.lineTo(end.x, end.y);
 			ctx.stroke();
 		}
 	}
