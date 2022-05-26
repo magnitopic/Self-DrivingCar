@@ -9,9 +9,26 @@ const networkCtx = networkCanvas.getContext("2d");
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 const N = 100;
 const cars = generataCars(N);
-const traffic = [new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2)];
+let bestCar = [0];
+if (localStorage.getItem("bestBrain")) {
+	bestCar.brain = JSON.parse(localStorage.getItem("bestBrain"));
+}
+
+const traffic = [
+	new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2),
+	new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY", 2),
+	new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 2),
+];
 
 animate();
+
+function save() {
+	localStorage.setItem("bestBrain", JSON.stringify(bestCar.brain));
+}
+
+function discard() {
+	localStorage.removeItem("bestBrain");
+}
 
 function generataCars(N) {
 	const cars = [];
@@ -26,14 +43,11 @@ function animate(time) {
 		traffic[i].update(road.borders, []);
 	}
 
-	for (let i=0;i<cars.length;i++){
+	for (let i = 0; i < cars.length; i++) {
 		cars[i].update(road.borders, traffic);
 	}
 
-	const bestCar=cars.find(
-		c=>c.y==Math.min(
-			...cars.map(c=>c.y)
-		));
+	bestCar = cars.find((c) => c.y == Math.min(...cars.map((c) => c.y)));
 
 	carCanvas.height = window.innerHeight;
 	networkCanvas.height = window.innerHeight;
@@ -46,12 +60,12 @@ function animate(time) {
 		traffic[i].draw(carCtx, "red");
 	}
 
-	carCtx.globalAlpha=0.2
-	for (let i=0;i<cars.length;i++){
+	carCtx.globalAlpha = 0.2;
+	for (let i = 0; i < cars.length; i++) {
 		cars[i].draw(carCtx, "blue");
 	}
-	carCtx.globalAlpha=1
-	bestCar.draw(carCtx, "blue",true);
+	carCtx.globalAlpha = 1;
+	bestCar.draw(carCtx, "blue", true);
 
 	carCtx.restore();
 
